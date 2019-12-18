@@ -1,14 +1,25 @@
 # aws-cli
 Docker container to easily send AWS CLI commands to Localstack Pro.
 
-The following assumes you have
-[aws-dns](https://github.com/miles-po/aws-dns) setup and installed along with
-a licensed copy of Localstack Pro.
+The following assumes you have a licensed copy of Localstack Pro.
+
+In your `.env-localstack` file
+
+```sh
+LOCALSTACK_API_KEY=xxxxxxxx
+...
+```
 
 In your `docker-compose.yml` file:
 
 ```yml
 services:
+  localstack:
+    ...
+    env-file: ./.env-localstack
+    networks:
+      my_network:
+        ipv4_address: 10.5.0.2
 
   ...
 
@@ -86,9 +97,17 @@ services:
       "
     networks:
       my_network:
-    dns: 10.5.0.3
+    dns: 10.5.0.2
     depends_on:
       localstack:
+
+networks:
+  my_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
 
 ```
 Note: --no-verify-ssl is mandatory.
